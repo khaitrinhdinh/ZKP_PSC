@@ -30,7 +30,7 @@ function generateSimpleInput() {
     
     // Tạo nullifier đơn giản
     const votingID = "1";
-    const nullifier = simpleHash(leaf, votingID);
+    const nullifier = simpleHash(votingID, leaf);
     
     return {
         votingID: votingID,

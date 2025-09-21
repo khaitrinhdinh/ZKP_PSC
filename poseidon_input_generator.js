@@ -30,7 +30,7 @@ function generateValidInput() {
         
         // Generate nullifier
         const votingID = "1";
-        const nullifier = poseidonHash([leaf, votingID]);
+        const nullifier = poseidonHash([votingID, leaf]);
         
         const input = {
             votingID: votingID,

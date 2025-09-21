@@ -37,8 +37,8 @@ async function generateInput() {
         
         // Generate nullifier
         const votingID = BigInt("1");
-        const nullifier = poseidon([leaf, votingID]);
-        console.log(`Nullifier: Poseidon(${leaf}, ${votingID}) = ${formatField(nullifier)}`);
+        const nullifier = poseidon([votingID, leaf]);
+        console.log(`Nullifier: Poseidon(${votingID}, ${leaf}) = ${formatField(nullifier)}`);
         
         const input = {
             votingID: votingID.toString(),
