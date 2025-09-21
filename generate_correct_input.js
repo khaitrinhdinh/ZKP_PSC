@@ -8,19 +8,15 @@ async function generateCorrectInput() {
         const poseidon = await circomlibjs.buildPoseidon();
         const F = poseidon.F;
 
-        // 1. Secret của user
         const secret = BigInt("12345678901234567890");
         console.log("Secret:", secret.toString());
 
-        // 2. Vote value (1 = "Có")
         const voteValue = BigInt("1");
         console.log("Vote value:", voteValue.toString());
 
-        // 3. Tạo leaf từ secret
         const leaf = poseidon([secret]);
         console.log("Leaf (from secret):", F.toString(leaf));
 
-        // 4. Tạo Merkle proof đơn giản với depth=10
         const depth = 10;
         const pathElements = [];
         const pathIndex = [];
@@ -29,13 +25,11 @@ async function generateCorrectInput() {
         console.log("\nBuilding Merkle tree:");
         console.log("Level 0 (leaf):", F.toString(currentHash));
 
-        // All siblings = 0, all paths = 0 (left child)
         for (let i = 0; i < depth; i++) {
-            const sibling = F.zero; // Sibling = 0
+            const sibling = F.zero;
             pathElements.push(F.toString(sibling));
-            pathIndex.push("0"); // Left child
+            pathIndex.push("0");
 
-            // Parent = Poseidon(current, sibling) since we're left child
             const parent = poseidon([currentHash, sibling]);
             console.log(`Level ${i + 1}: Poseidon(${F.toString(currentHash)}, ${F.toString(sibling)}) = ${F.toString(parent)}`);
             currentHash = parent;
@@ -44,11 +38,9 @@ async function generateCorrectInput() {
         const merkleRoot = currentHash;
         console.log("\nFinal merkle root:", F.toString(merkleRoot));
 
-        // 5. Tạo nullifier từ secret
         const nullifierHash = poseidon([secret]);
         console.log("Nullifier hash:", F.toString(nullifierHash));
 
-        // 6. Tạo input object
         const input = {
             secret: secret.toString(),
             voteValue: voteValue.toString(),
@@ -61,7 +53,6 @@ async function generateCorrectInput() {
         console.log("\n=== GENERATED INPUT ===");
         console.log(JSON.stringify(input, null, 2));
 
-        // 7. Verify tính toán
         console.log("\n=== VERIFICATION ===");
         let verifyHash = leaf;
         console.log("Start with leaf:", F.toString(verifyHash));
@@ -81,19 +72,17 @@ async function generateCorrectInput() {
 
         console.log("Computed root:", F.toString(verifyHash));
         console.log("Expected root:", F.toString(merkleRoot));
-        console.log("Match:", F.eq(verifyHash, merkleRoot) ? "✅ YES" : "❌ NO");
+        console.log("Match:", F.eq(verifyHash, merkleRoot) ? "YES" : "NO");
 
-        // 8. Write to file
         const fs = require("fs");
         fs.writeFileSync("./circuits/inputs/vote.input.json", JSON.stringify(input, null, 2));
-        console.log("\n✅ Written to ./circuits/inputs/vote.input.json");
+        console.log("\n Written to ./circuits/inputs/vote.input.json");
 
         return input;
 
     } catch (error) {
         console.error("Error:", error);
         
-        // Fallback with hardcoded values
         console.log("Using fallback values...");
         const fallbackInput = {
             secret: "12345678901234567890",
@@ -106,7 +95,7 @@ async function generateCorrectInput() {
 
         const fs = require("fs");
         fs.writeFileSync("./circuits/inputs/vote.input.json", JSON.stringify(fallbackInput, null, 2));
-        console.log("✅ Used fallback input");
+        console.log("Used fallback input");
         
         return fallbackInput;
     }

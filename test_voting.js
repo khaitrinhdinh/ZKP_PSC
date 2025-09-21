@@ -2,21 +2,25 @@
 const snarkjs = require("snarkjs");
 const fs = require("fs");
 
+const ZKEY_PATH = process.env.VOTE_ZKEY_PATH || "./vote_final.zkey";
+
 async function testVoting() {
     try {
-        // 1. Generate witness
         console.log("Generating witness...");
-        // (already done above)
 
-        // 2. Generate proof  
         console.log("Generating proof...");
+        if (!fs.existsSync(ZKEY_PATH)) {
+            throw new Error(
+                `Missing proving key at "${ZKEY_PATH}". Please run 'snarkjs groth16 setup' to generate vote_final.zkey before running this test.`
+            );
+        }
+
         const { proof, publicSignals } = await snarkjs.groth16.fullProve(
             require("./circuits/inputs/vote.input.json"),
             "./circuits/out/vote_js/vote.wasm", 
-            "./vote_final.zkey"
+            ZKEY_PATH
         );
 
-        // 3. Verify proof
         console.log("Verifying proof...");
         const vKey = JSON.parse(fs.readFileSync("verification_key.json"));
         const res = await snarkjs.groth16.verify(vKey, publicSignals, proof);
@@ -24,10 +28,10 @@ async function testVoting() {
         console.log("Verification result:", res);
         
         if (res === true) {
-            console.log("✅ Vote proof is VALID!");
+            console.log("Vote proof is VALID!");
             console.log("Public signals:", publicSignals);
         } else {
-            console.log("❌ Vote proof is INVALID!");
+            console.log("Vote proof is INVALID!");
         }
 
     } catch (error) {
