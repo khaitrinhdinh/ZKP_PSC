@@ -19,6 +19,8 @@ async function generateInput() {
         console.log(`Starting with leaf: ${currentHash}`);
         
         // Path all zeros (left child at each level)
+        const formatField = (value) => poseidon.F.toString(value instanceof Uint8Array ? value : poseidon.F.e(value));
+
         for (let i = 0; i < depth; i++) {
             const sibling = BigInt("0"); // Sibling is 0
             siblings.push(sibling.toString());
@@ -26,23 +28,23 @@ async function generateInput() {
             // Since path[i] = 0, current node is left child
             // parent = Poseidon(current, sibling)
             const newHash = poseidon([currentHash, sibling]);
-            console.log(`Level ${i}: Poseidon(${currentHash}, ${sibling}) = ${newHash}`);
+            console.log(`Level ${i}: Poseidon(${formatField(currentHash)}, ${sibling}) = ${formatField(newHash)}`);
             currentHash = newHash;
         }
         
         const root = currentHash;
-        console.log(`Final root: ${root}`);
+        console.log(`Final root: ${formatField(root)}`);
         
         // Generate nullifier
         const votingID = BigInt("1");
         const nullifier = poseidon([leaf, votingID]);
-        console.log(`Nullifier: Poseidon(${leaf}, ${votingID}) = ${nullifier}`);
+        console.log(`Nullifier: Poseidon(${leaf}, ${votingID}) = ${formatField(nullifier)}`);
         
         const input = {
             votingID: votingID.toString(),
-            lemma: [leaf.toString(), ...siblings, root.toString()],
+            lemma: [leaf.toString(), ...siblings, formatField(root)],
             path: ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            nullifier: nullifier.toString()
+            nullifier: formatField(nullifier)
         };
         
         console.log("\nGenerated valid input:");
