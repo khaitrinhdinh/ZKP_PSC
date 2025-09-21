@@ -1,0 +1,21 @@
+{
+  "name": "zkp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "w:leaf": "node ./circuits/out/Leaf_js/generate_witness.js ./circuits/out/Leaf_js/Leaf.wasm ./circuits/inputs/leaf.input.json ./circuits/out/leaf.wtns",
+    "c:leaf": "circom ./circuits/lib/Leaf.circom --r1cs --wasm -l ./node_modules/circomlib/circuits -o ./circuits/out",
+    "c:nullifier": "circom ./circuits/lib/Nullifier.circom --r1cs --wasm -l ./node_modules/circomlib/circuits -o ./circuits/out",
+    "c:merkle": "circom ./circuits/lib/MerklePath.circom --r1cs --wasm -l ./node_modules/circomlib/circuits -o ./circuits/out",
+    "c:vote": "circom ./circuits/vote.circom --r1cs --wasm -l ./node_modules/circomlib/circuits -o ./circuits/out"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "circomlib": "^2.0.5",
+    "circomlibjs": "^0.1.7",
+    "snarkjs": "^0.7.5"
+  }
+}
