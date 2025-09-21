@@ -1,0 +1,19 @@
+# Node.js
+node_modules/
+dist/
+.env
+
+# Circom build outputs
+circuits/out/
+circuits/build/
+circuits/powersOfTau/
+*.r1cs
+*.zkey
+*.ptau
+*.wtns
+*.sym
+
+# Python venv (nếu mày có script Python)
+venv/
+__pycache__/
+*.pyc
